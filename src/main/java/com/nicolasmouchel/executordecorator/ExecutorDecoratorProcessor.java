@@ -86,10 +86,12 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
 
             final String name1 = variableElement.getSimpleName().toString();
             paramNameList.add(name1);
-            paramList.add(ParameterSpec.builder(TypeName.get(variableElement.asType()),
-                    name1,
-                    variableElement.getModifiers()
-                            .toArray(new Modifier[variableElement.getModifiers().size()]))
+            final TypeName type = TypeName.get(variableElement.asType());
+            final Modifier[] modifiers = variableElement.getModifiers()
+                    .toArray(new Modifier[variableElement.getModifiers().size()]);
+            paramList.add(ParameterSpec
+                    .builder(type, name1, modifiers)
+                    .addModifiers(Modifier.FINAL)
                     .build()
             );
         }
