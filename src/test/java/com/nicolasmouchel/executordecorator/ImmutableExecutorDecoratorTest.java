@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
-public class ExecutorDecoratorTest {
+public class ImmutableExecutorDecoratorTest {
     @Test
     public void dummy() {
         Truth.assert_().about(javaSource())

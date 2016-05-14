@@ -11,7 +11,7 @@ public final class DummyDecorator implements DummyModule.Dummy {
         this.executor = executor;
     }
 
-    public void setDummy(DummyModule.Dummy dummy) {
-        this.decorated = dummy;
+    public void setDummy(final DummyModule.Dummy decorated) {
+        this.decorated = decorated;
     }
 }

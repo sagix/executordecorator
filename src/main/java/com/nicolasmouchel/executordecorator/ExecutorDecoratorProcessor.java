@@ -42,7 +42,8 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
                 return true;
             }
 
-            final JavaFile javaFile = generateClass(annotatedElement, definition);
+            final ExecutorDecorator annotation = annotatedElement.getAnnotation(ExecutorDecorator.class);
+            final JavaFile javaFile = generateClass(annotatedElement, definition, annotation);
             try {
                 javaFile.writeTo(filer);
             } catch (IOException e) {
@@ -52,32 +53,46 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
         return false;
     }
 
-    private JavaFile generateClass(Element annotatedElement, Element definition) {
+    private JavaFile generateClass(Element annotatedElement, Element definition, ExecutorDecorator annotation) {
         final TypeElement definition1 = (TypeElement) definition;
         final List<? extends Element> allMembers = elementUtils.getAllMembers(definition1);
         final List<ExecutableElement> executableElements = ElementFilter.methodsIn(allMembers);
 
-        final List<MethodSpec> methodSpecList = generateMethods(executableElements);
-        final MethodSpec flux = generateConstructor(definition);
-        final TypeSpec typeSpec = generateClassSpec(definition, methodSpecList, flux);
+        final List<MethodSpec> methodSpecList = generateMethods(executableElements, annotation);
+        if (annotation.mutable()) {
+            methodSpecList.add(0, generateMutableMethod(definition));
+        }
+        final MethodSpec flux = generateConstructor(definition, annotation);
+        final TypeSpec typeSpec = generateClassSpec(definition, methodSpecList, flux, annotation);
         PackageElement pkg = elementUtils.getPackageOf(annotatedElement);
 
         return JavaFile.builder(pkg.getQualifiedName().toString(), typeSpec).build();
     }
 
-    private List<MethodSpec> generateMethods(List<ExecutableElement> executableElements) {
+    private MethodSpec generateMutableMethod(Element definition) {
+        return MethodSpec.methodBuilder("set" + definition.getSimpleName().toString())
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ParameterSpec
+                        .builder(TypeName.get(definition.asType()), "decorated")
+                        .addModifiers(Modifier.FINAL)
+                        .build())
+                .addStatement("this.decorated = decorated")
+                .build();
+    }
+
+    private List<MethodSpec> generateMethods(List<ExecutableElement> executableElements, ExecutorDecorator annotation) {
         List<MethodSpec> methodSpecList = new ArrayList<MethodSpec>();
         for (ExecutableElement method : executableElements) {
             if (method.getKind().equals(ElementKind.METHOD)
                     && method.getReturnType().getKind().equals(TypeKind.VOID)
                     && mustBeGenerated(method)) {
-                methodSpecList.add(generateMethod(method));
+                methodSpecList.add(generateMethod(method, annotation));
             }
         }
         return methodSpecList;
     }
 
-    private MethodSpec generateMethod(ExecutableElement method) {
+    private MethodSpec generateMethod(ExecutableElement method, ExecutorDecorator annotation) {
         final String name = method.getSimpleName().toString();
 
         List<ParameterSpec> paramList = new ArrayList<ParameterSpec>();
@@ -105,30 +120,49 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
                         .addStatement("decorated.$N($N)", name, strJoin(paramNameList.toArray(new String[paramNameList.size()]), ","))
                         .build())
                 .build();
-        return MethodSpec.methodBuilder(name)
+        final MethodSpec.Builder builder = MethodSpec.methodBuilder(name)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameters(paramList)
-                .addStatement("$N.execute($L)", "executor", runnable)
+                .addParameters(paramList);
+        if (annotation.mutable()) {
+            builder.addCode(CodeBlock.builder()
+                    .beginControlFlow("if(decorated == null)")
+                    .addStatement("return")
+                    .endControlFlow()
+                    .build());
+        }
+        return builder.addStatement("$N.execute($L)", "executor", runnable)
                 .build();
     }
 
-    private MethodSpec generateConstructor(Element definition) {
-        return MethodSpec.constructorBuilder()
+    private MethodSpec generateConstructor(Element definition, ExecutorDecorator annotation) {
+        final MethodSpec.Builder builder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(Executor.class, "executor")
-                .addParameter(TypeName.get(definition.asType()), "decorated")
-                .addStatement("this.$N = $N", "executor", "executor")
-                .addStatement("this.$N = $N", "decorated", "decorated")
-                .build();
+                .addParameter(Executor.class, "executor").addStatement("this.$N = $N", "executor", "executor");
+        if (!annotation.mutable()) {
+            builder.addParameter(TypeName.get(definition.asType()), "decorated")
+                    .addStatement("this.$N = $N", "decorated", "decorated");
+        }
+        return builder.build();
     }
 
-    private TypeSpec generateClassSpec(Element definition, List<MethodSpec> methodSpecList, MethodSpec flux) {
+    private TypeSpec generateClassSpec(
+            Element definition,
+            List<MethodSpec> methodSpecList,
+            MethodSpec flux,
+            ExecutorDecorator annotation) {
+        final boolean mutable = annotation.mutable();
+        final Modifier[] modifiers = new Modifier[mutable ? 1 : 2];
+        modifiers[0] = Modifier.PRIVATE;
+        if (!mutable) {
+            modifiers[1] = Modifier.FINAL;
+        }
+
         return TypeSpec.classBuilder(definition.getSimpleName() + "Decorator")
                 .addSuperinterface(TypeName.get(definition.asType()))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(Executor.class, "executor", Modifier.PRIVATE, Modifier.FINAL)
-                .addField(TypeName.get(definition.asType()), "decorated", Modifier.PRIVATE, Modifier.FINAL)
+                .addField(TypeName.get(definition.asType()), "decorated", modifiers)
                 .addMethod(flux)
                 .addMethods(methodSpecList)
                 .build();
