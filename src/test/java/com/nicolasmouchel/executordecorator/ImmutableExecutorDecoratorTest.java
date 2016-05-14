@@ -26,6 +26,15 @@ public class ImmutableExecutorDecoratorTest {
     }
 
     @Test
+    public void voidNonMethod() {
+        Truth.assert_().about(javaSource())
+                .that(JavaFileObjects.forResource("immutable/NonVoidMethodModule.java"))
+                .processedWith(new ExecutorDecoratorProcessor())
+                .compilesWithoutError()
+                .and().generatesSources(JavaFileObjects.forResource("immutable/NonVoidMethodDecorator.java"));
+    }
+
+    @Test
     public void voidMethodWithParameter() {
         Truth.assert_().about(javaSource())
                 .that(JavaFileObjects.forResource("immutable/VoidMethodWithParameterModule.java"))
