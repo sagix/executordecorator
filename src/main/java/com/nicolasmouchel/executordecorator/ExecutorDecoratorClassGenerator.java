@@ -1,6 +1,9 @@
 package com.nicolasmouchel.executordecorator;
 
-import com.squareup.javapoet.*;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
@@ -72,23 +75,23 @@ class ExecutorDecoratorClassGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .returns(TypeName.get(method.getReturnType()))
                 .addParameters(paramList);
-        if (annotation.mutable()) {
-            builder.addCode(CodeBlock.builder()
-                    .beginControlFlow("if( decorated == null )")
-                    .addStatement("return")
-                    .endControlFlow()
-                    .build());
-        }
+
         final String params = strJoin(paramNameList.toArray(new String[paramNameList.size()]), ",");
         if (useRunnable) {
+            final MethodSpec.Builder run = MethodSpec.methodBuilder("run")
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(void.class);
+            if (annotation.mutable()) {
+                run.beginControlFlow("if (decorated != null)")
+                        .addStatement("decorated.$N($N)", name, params)
+                        .endControlFlow();
+            } else {
+                run.addStatement("decorated.$N($N)", name, params);
+            }
             final TypeSpec runnable = TypeSpec.anonymousClassBuilder("")
                     .addSuperinterface(Runnable.class)
-                    .addMethod(MethodSpec.methodBuilder("run")
-                            .addAnnotation(Override.class)
-                            .addModifiers(Modifier.PUBLIC)
-                            .returns(void.class)
-                            .addStatement("decorated.$N($N)", name, params)
-                            .build())
+                    .addMethod(run.build())
                     .build();
             builder.addStatement("$N.execute($L)", "executor", runnable);
         } else {

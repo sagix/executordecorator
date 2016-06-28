@@ -72,7 +72,10 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
             final TypeSpec typeSpec = classGenerator.generate();
             final PackageElement pkg = elementUtils.getPackageOf(annotatedElement);
 
-            final JavaFile javaFile = JavaFile.builder(pkg.getQualifiedName().toString(), typeSpec).build();
+            final JavaFile javaFile = JavaFile
+                    .builder(pkg.getQualifiedName().toString(), typeSpec)
+                    .indent("    ")
+                    .build();
             try {
                 javaFile.writeTo(filer);
             } catch (IOException e) {

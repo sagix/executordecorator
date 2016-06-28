@@ -19,14 +19,13 @@ public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod {
 
     @Override
     public void method() {
-        if (decorated == null) {
-            return;
-        }
         executor.execute(new Runnable() {
 
             @Override()
             public void run() {
-                decorated.method();
+                if (decorated != null) {
+                    decorated.method();
+                }
             }
         });
     }
