@@ -1,10 +1,24 @@
+import org.gradle.internal.jvm.Jvm
+
 group 'com.nicolasmouchel'
-version '1.0-SNAPSHOT'
+version '1.0'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.3.1'
+    }
+}
+
 
 apply plugin: 'java'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 //noinspection GroovyUnusedAssignment
-sourceCompatibility = 1.6
+sourceCompatibility = JavaVersion.VERSION_1_6
 
 repositories {
     mavenLocal()
@@ -17,4 +31,51 @@ dependencies {
     compile 'com.google.auto.service:auto-service:1.0-rc2'
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.testing.compile:compile-testing:0.8'
+    testCompile files(Jvm.current().getToolsJar())
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.nicolasmouchel'
+            artifactId 'appaloosa-deploy'
+            version '1.0'
+
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    dryRun = false
+    publish = true
+    publications = ['maven']
+    pkg {
+        repo = 'maven'         // The repository
+        name = 'executordecorator' // The package
+        desc = 'Annotation library which create a decorator for interfaces that delegate any actions with a executor'
+        websiteUrl = 'https://github.com/sagix/executordecorator'
+        issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'
+        vcsUrl = 'https://github.com/sagix/executordecorator/issues.git'
+        licenses = ['ISC']
+        labels = ['executor', 'decorator', 'asynchronous']
+        publicDownloadNumbers = true
+    }
 }
