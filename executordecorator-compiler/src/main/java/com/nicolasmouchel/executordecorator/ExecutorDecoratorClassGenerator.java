@@ -144,7 +144,7 @@ class ExecutorDecoratorClassGenerator {
                 .build();
     }
 
-    private static List<String> blackList = Arrays.asList("hashCode", "equals", "getClass", "toString", "notify", "notifyAll", "wait");
+    private static List<String> blackList = Arrays.asList("hashCode", "equals", "getClass", "toString", "notify", "notifyAll", "wait", "clone", "finalize");
 
     private static boolean mustBeGenerated(ExecutableElement method) {
         return !blackList.contains(method.getSimpleName().toString());
