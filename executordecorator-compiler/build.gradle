@@ -1,5 +1,5 @@
 group 'com.nicolasmouchel'
-version '1.0'
+version '1.1'
 
 apply plugin: 'java'
 apply plugin: 'com.jfrog.bintray'
@@ -33,7 +33,7 @@ publishing {
         maven(MavenPublication) {
             groupId 'com.nicolasmouchel'
             artifactId 'executordecorator-compiler'
-            version '1.0'
+            version '1.1'
 
             from components.java
 
