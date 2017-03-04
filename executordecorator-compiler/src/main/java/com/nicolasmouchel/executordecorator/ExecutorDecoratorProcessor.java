@@ -12,13 +12,14 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class ExecutorDecoratorProcessor extends AbstractProcessor {
-    public static final String TAG = ExecutorDecorator.class.getSimpleName();
+    private static final String TAG = ExecutorDecoratorProcessor.class.getSimpleName();
     private Types typeUtils;
     private Elements elementUtils;
     private Filer filer;
@@ -32,7 +33,8 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotations = new LinkedHashSet<String>();
-        annotations.add(ExecutorDecorator.class.getCanonicalName());
+        annotations.add(ImmutableExecutorDecorator.class.getCanonicalName());
+        annotations.add(MutableExecutorDecorator.class.getCanonicalName());
         return annotations;
     }
 
@@ -47,50 +49,64 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        return new MicroProcessor(roundEnv, ImmutableExecutorDecorator.class, new ImmutableGenerator()).process()
+                || new MicroProcessor(roundEnv, MutableExecutorDecorator.class, new MutableGenerator()).process();
+    }
 
-        for (final Element annotatedElement : roundEnv.getElementsAnnotatedWith(ExecutorDecorator.class)) {
-            if (!ElementKind.METHOD.equals(annotatedElement.getKind())) {
-                error(annotatedElement, "Only method can be annotated with %s", TAG);
-                return true;
-            }
-            final ExecutableElement element = (ExecutableElement) annotatedElement;
-            if (element.getReturnType().getKind().equals(TypeKind.VOID)) {
-                error(annotatedElement, "Method that return void can not be annotated with %s", TAG);
-                return true;
-            }
-            final Element definition = typeUtils.asElement(element.getReturnType());
-            if (!definition.getKind().isInterface()) {
-                error(annotatedElement, "%s can only be used in interface", TAG);
-                return true;
-            }
+    private class MicroProcessor {
+        private RoundEnvironment roundEnv;
+        private Class<? extends Annotation> executorDecoratorClass;
+        private Generator generator;
 
-            final ExecutorDecorator annotation = annotatedElement.getAnnotation(ExecutorDecorator.class);
-
-            final ExecutorDecoratorClassGenerator classGenerator = new ExecutorDecoratorClassGenerator(
-                    elementUtils.getAllMembers((TypeElement) definition), definition, annotation);
-
-            final TypeSpec typeSpec = classGenerator.generate();
-            final PackageElement pkg = elementUtils.getPackageOf(annotatedElement);
-
-            final JavaFile javaFile = JavaFile
-                    .builder(pkg.getQualifiedName().toString(), typeSpec)
-                    .indent("    ")
-                    .build();
-            try {
-                javaFile.writeTo(filer);
-            } catch (IOException e) {
-                error(annotatedElement, e.getMessage());
-            }
+        MicroProcessor(
+                RoundEnvironment roundEnv, Class<? extends Annotation> executorDecoratorClass, Generator generator) {
+            this.roundEnv = roundEnv;
+            this.executorDecoratorClass = executorDecoratorClass;
+            this.generator = generator;
         }
-        return false;
+
+        boolean process() {
+            for (final Element annotatedElement : roundEnv.getElementsAnnotatedWith(executorDecoratorClass)) {
+                if (!ElementKind.METHOD.equals(annotatedElement.getKind())) {
+                    error(annotatedElement, "Only method can be annotated with %s", TAG);
+                    return true;
+                }
+                final ExecutableElement element = (ExecutableElement) annotatedElement;
+                if (element.getReturnType().getKind().equals(TypeKind.VOID)) {
+                    error(annotatedElement, "Method that return void can not be annotated with %s", TAG);
+                    return true;
+                }
+                final Element definition = typeUtils.asElement(element.getReturnType());
+                if (!definition.getKind().isInterface()) {
+                    error(annotatedElement, "%s can only be used in interface", TAG);
+                    return true;
+                }
+                final Annotation annotation = annotatedElement.getAnnotation(executorDecoratorClass);
+
+                final ExecutorDecoratorClassGenerator classGenerator = new ExecutorDecoratorClassGenerator(
+                        elementUtils.getAllMembers((TypeElement) definition), definition, generator);
+
+                final TypeSpec typeSpec = classGenerator.generate();
+                final PackageElement pkg = elementUtils.getPackageOf(annotatedElement);
+
+                final JavaFile javaFile = JavaFile
+                        .builder(pkg.getQualifiedName().toString(), typeSpec)
+                        .indent("    ")
+                        .build();
+                try {
+                    javaFile.writeTo(filer);
+                } catch (IOException e) {
+                    error(annotatedElement, e.getMessage());
+                }
+            }
+            return false;
+        }
+
+        private void error(Element e, String msg, Object... args) {
+            messager.printMessage(
+                    Diagnostic.Kind.ERROR,
+                    String.format(msg, args),
+                    e);
+        }
     }
-
-
-    private void error(Element e, String msg, Object... args) {
-        messager.printMessage(
-                Diagnostic.Kind.ERROR,
-                String.format(msg, args),
-                e);
-    }
-
 }

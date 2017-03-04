@@ -1,13 +1,13 @@
 package immutable;
 
-import com.nicolasmouchel.executordecorator.ExecutorDecorator;
+import com.nicolasmouchel.executordecorator.ImmutableExecutorDecorator;
 
 final class NonVoidMethodModule {
     interface NonVoidMethod{
         int method();
     }
 
-    @ExecutorDecorator
+    @ImmutableExecutorDecorator
     public NonVoidMethod produceNonVoidMethod(){
         return null;
     }
