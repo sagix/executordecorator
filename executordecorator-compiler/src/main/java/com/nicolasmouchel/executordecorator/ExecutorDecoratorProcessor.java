@@ -37,6 +37,7 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
         Set<String> annotations = new LinkedHashSet<String>();
         annotations.add(ImmutableExecutorDecorator.class.getCanonicalName());
         annotations.add(MutableExecutorDecorator.class.getCanonicalName());
+        annotations.add(WeakExecutorDecorator.class.getCanonicalName());
         return annotations;
     }
 
@@ -52,7 +53,8 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         return new MicroProcessor(roundEnv, ImmutableExecutorDecorator.class, new ImmutableGenerator()).process()
-                || new MicroProcessor(roundEnv, MutableExecutorDecorator.class, new MutableGenerator()).process();
+                || new MicroProcessor(roundEnv, MutableExecutorDecorator.class, new MutableGenerator()).process()
+                || new MicroProcessor(roundEnv, WeakExecutorDecorator.class, new WeakGenerator()).process();
     }
 
     private class MicroProcessor {
