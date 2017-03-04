@@ -7,7 +7,9 @@ import com.squareup.javapoet.TypeSpec;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -72,19 +74,32 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
                     return true;
                 }
                 final ExecutableElement element = (ExecutableElement) annotatedElement;
-                if (element.getReturnType().getKind().equals(TypeKind.VOID)) {
+                final TypeMirror returnType = element.getReturnType();
+                if (returnType.getKind().equals(TypeKind.VOID)) {
                     error(annotatedElement, "Method that return void can not be annotated with %s", TAG);
                     return true;
                 }
-                final Element definition = typeUtils.asElement(element.getReturnType());
+                final Element definition = typeUtils.asElement(returnType);
                 if (!definition.getKind().isInterface()) {
                     error(annotatedElement, "%s can only be used in interface", TAG);
                     return true;
                 }
+
+                final Element realDefinition;
+                if (definition.getSimpleName().toString().equals("MutableDecorator")) {
+                    realDefinition = typeUtils.asElement(
+                            ((DeclaredType) returnType).getTypeArguments().get(0));
+                    generator.setRawType(returnType);
+                    generator.setDefinition(realDefinition);
+                } else {
+                    realDefinition = definition;
+                    generator.setRawType(returnType);
+                    generator.setDefinition(definition);
+                }
                 final Annotation annotation = annotatedElement.getAnnotation(executorDecoratorClass);
 
                 final ExecutorDecoratorClassGenerator classGenerator = new ExecutorDecoratorClassGenerator(
-                        elementUtils.getAllMembers((TypeElement) definition), definition, generator);
+                        elementUtils.getAllMembers((TypeElement) realDefinition), realDefinition, generator);
 
                 final TypeSpec typeSpec = classGenerator.generate();
                 final PackageElement pkg = elementUtils.getPackageOf(annotatedElement);

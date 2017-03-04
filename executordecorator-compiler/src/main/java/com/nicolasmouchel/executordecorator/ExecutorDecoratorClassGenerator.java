@@ -24,7 +24,7 @@ class ExecutorDecoratorClassGenerator {
 
     TypeSpec generate() {
         final List<MethodSpec> methodSpecList = new ArrayList<MethodSpec>();
-        methodSpecList.addAll(generator.generateMethodSpecList(definition));
+        methodSpecList.addAll(generator.generateMethodSpecList());
         methodSpecList.addAll(generateMethods(ElementFilter.methodsIn(members)));
         return generateClassSpec(methodSpecList);
     }
@@ -47,10 +47,10 @@ class ExecutorDecoratorClassGenerator {
     private TypeSpec generateClassSpec(List<MethodSpec> methodSpecList) {
 
         return TypeSpec.classBuilder(definition.getSimpleName() + "Decorator")
-                .addSuperinterface(TypeName.get(definition.asType()))
+                .addSuperinterfaces(generator.generateSuperinterfaces())
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(Executor.class, "executor", Modifier.PRIVATE, Modifier.FINAL)
-                .addFields(generator.generateFields(definition))
+                .addFields(generator.generateFields())
                 .addMethods(methodSpecList)
                 .build();
     }

@@ -1,7 +1,20 @@
 package com.nicolasmouchel.executordecorator;
 
-/**
- * Created by nmo on 04/03/2017.
- */
-public class AbstractGenerator {
+import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
+
+public abstract class AbstractGenerator implements Generator {
+
+    TypeMirror rawType;
+    Element definition;
+
+    @Override
+    public void setRawType(TypeMirror rawType) {
+        this.rawType = rawType;
+    }
+
+    @Override
+    public void setDefinition(Element definition) {
+        this.definition = definition;
+    }
 }

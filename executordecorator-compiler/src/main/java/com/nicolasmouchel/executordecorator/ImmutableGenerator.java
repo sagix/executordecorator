@@ -5,16 +5,15 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 
 
-public class ImmutableGenerator implements Generator {
+public class ImmutableGenerator extends AbstractGenerator {
     @Override
-    public Iterable<FieldSpec> generateFields(Element definition) {
+    public Iterable<FieldSpec> generateFields() {
         return Collections.singletonList(
                 FieldSpec.builder(
                         TypeName.get(definition.asType()),
@@ -30,7 +29,7 @@ public class ImmutableGenerator implements Generator {
     }
 
     @Override
-    public List<MethodSpec> generateMethodSpecList(Element definition) {
+    public List<MethodSpec> generateMethodSpecList() {
         return Collections.singletonList(
                 MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PUBLIC)
@@ -40,5 +39,10 @@ public class ImmutableGenerator implements Generator {
                         .addStatement("this.$N = $N", "decorated", "decorated")
                         .build()
         );
+    }
+
+    @Override
+    public Iterable<? extends TypeName> generateSuperinterfaces() {
+        return Collections.singletonList(TypeName.get(definition.asType()));
     }
 }

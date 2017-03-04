@@ -2,7 +2,6 @@ package com.nicolasmouchel.executordecorator;
 
 import com.squareup.javapoet.*;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +9,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 
-public class MutableGenerator implements Generator {
+public class MutableGenerator extends AbstractGenerator {
     @Override
-    public Iterable<FieldSpec> generateFields(Element definition) {
+    public Iterable<FieldSpec> generateFields() {
         return Collections.singletonList(
                 FieldSpec.builder(
                         TypeName.get(definition.asType()),
@@ -30,16 +29,18 @@ public class MutableGenerator implements Generator {
     }
 
     @Override
-    public List<MethodSpec> generateMethodSpecList(Element definition) {
+    public List<MethodSpec> generateMethodSpecList() {
         final List<MethodSpec> methodSpecList = new ArrayList<MethodSpec>();
         methodSpecList.add(
                 MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PUBLIC)
-                        .addParameter(Executor.class, "executor").addStatement("this.$N = $N", "executor", "executor")
+                        .addParameter(Executor.class, "executor")
+                        .addStatement("this.$N = $N", "executor", "executor")
                         .build()
         );
         methodSpecList.add(
-                MethodSpec.methodBuilder("set" + definition.getSimpleName().toString())
+                MethodSpec.methodBuilder("mutate")
+                        .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
                         .addParameter(ParameterSpec
                                 .builder(TypeName.get(definition.asType()), "decorated")
@@ -48,6 +49,22 @@ public class MutableGenerator implements Generator {
                         .addStatement("this.decorated = decorated")
                         .build()
         );
+        methodSpecList.add(
+                MethodSpec.methodBuilder("asDecorated")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(TypeName.get(definition.asType()))
+                        .addStatement("return $N", "this")
+                        .build()
+        );
         return methodSpecList;
+    }
+
+    @Override
+    public Iterable<? extends TypeName> generateSuperinterfaces() {
+        final List<TypeName> list = new ArrayList<TypeName>();
+        list.add(TypeName.get(definition.asType()));
+        list.add(TypeName.get(rawType));
+        return list;
     }
 }
