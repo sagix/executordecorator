@@ -2,4 +2,3 @@ rootProject.name = 'executordecorator'
 include 'executordecorator-compiler'
 include 'executordecorator-annotations'
 include 'executordecorator-samples'
-
