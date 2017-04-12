@@ -3,6 +3,7 @@ package com.nicolasmouchel.executordecorator;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.Modifier;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,8 +64,16 @@ public class MutableGenerator extends AbstractGenerator {
     @Override
     public Iterable<? extends TypeName> generateSuperinterfaces() {
         final List<TypeName> list = new ArrayList<TypeName>();
-        list.add(TypeName.get(definition.asType()));
-        list.add(TypeName.get(rawType));
+        final TypeMirror mirror = definition.asType();
+        list.add(TypeName.get(mirror));
+        if (mirror.equals(rawType)) {
+            list.add(ParameterizedTypeName.get(
+                    ClassName.get(MutableDecorator.class),
+                    TypeName.get(mirror)
+            ));
+        } else {
+            list.add(TypeName.get(rawType));
+        }
         return list;
     }
 }
