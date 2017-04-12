@@ -19,7 +19,9 @@ interface MyInterface{
 }
 ```
 ```java 
-@ImmutableExecutorDecorator public MyInterface provideMyInterface(){}
+@ImmutableExecutorDecorator public MyInterface provideMyInterface(){
+    return null;
+}
 ```
 Will generate:
 ```java
