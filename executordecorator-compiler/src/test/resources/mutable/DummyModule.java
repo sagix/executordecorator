@@ -1,14 +1,19 @@
 package mutable;
 
-import com.nicolasmouchel.executordecorator.ExecutorDecorator;
+import com.nicolasmouchel.executordecorator.MutableExecutorDecorator;
+import com.nicolasmouchel.executordecorator.MutableDecorator;
 
 final class DummyModule {
     interface Dummy {
 
     }
 
-    @ExecutorDecorator(mutable = true)
-    public Dummy produceDummy() {
+    @MutableExecutorDecorator
+    public MutableDecorator<Dummy> produceMutableDummy() {
         return null;
+    }
+
+    public Dummy produceDummy(MutableDecorator<Dummy> mutable){
+        return mutable.asDecorated();
     }
 }

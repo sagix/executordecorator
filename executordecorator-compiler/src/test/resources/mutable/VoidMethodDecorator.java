@@ -1,10 +1,12 @@
 package mutable;
 
+import com.nicolasmouchel.executordecorator.MutableDecorator;
+
 import java.lang.Override;
 import java.lang.Runnable;
 import java.util.concurrent.Executor;
 
-public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod {
+public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod, MutableDecorator<VoidMethodModule.VoidMethod> {
     private final Executor executor;
 
     private VoidMethodModule.VoidMethod decorated;
@@ -13,8 +15,14 @@ public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod {
         this.executor = executor;
     }
 
-    public void setVoidMethod(final VoidMethodModule.VoidMethod decorated) {
+    @Override
+    public void mutate(final VoidMethodModule.VoidMethod decorated) {
         this.decorated = decorated;
+    }
+
+    @Override
+    public VoidMethodModule.VoidMethod asDecorated() {
+        return this;
     }
 
     @Override

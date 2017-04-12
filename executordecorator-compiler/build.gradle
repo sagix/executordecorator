@@ -1,5 +1,6 @@
-group 'com.nicolasmouchel'
-version '1.1'
+group libGroup
+version libVersion
+def libName = 'executordecorator-compiler'
 
 apply plugin: 'java'
 apply plugin: 'com.jfrog.bintray'
@@ -31,9 +32,9 @@ task sourceJar(type: Jar) {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId 'com.nicolasmouchel'
-            artifactId 'executordecorator-compiler'
-            version '1.1'
+            groupId libGroup
+            artifactId libName
+            version libGroup
 
             from components.java
 
@@ -59,7 +60,7 @@ bintray {
     publications = ['maven']
     pkg {
         repo = 'maven'         // The repository
-        name = 'executordecorator-compiler' // The package
+        name = libName // The package
         desc = 'Annotation library which create a decorator for interfaces that delegate any actions with a executor'
         websiteUrl = 'https://github.com/sagix/executordecorator'
         issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'

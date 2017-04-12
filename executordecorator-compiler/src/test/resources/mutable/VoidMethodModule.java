@@ -1,14 +1,19 @@
 package mutable;
 
-import com.nicolasmouchel.executordecorator.ExecutorDecorator;
+import com.nicolasmouchel.executordecorator.MutableExecutorDecorator;
+import com.nicolasmouchel.executordecorator.MutableDecorator;
 
 final class VoidMethodModule {
     interface VoidMethod{
         void method();
     }
 
-    @ExecutorDecorator(mutable = true)
-    public VoidMethod produceVoidMethod(){
+    @MutableExecutorDecorator
+    public MutableDecorator<VoidMethod> produceMutableVoidMethod() {
         return null;
+    }
+
+    public VoidMethod produceVoidMethod(MutableDecorator<VoidMethod> mutable){
+        return mutable.asDecorated();
     }
 }

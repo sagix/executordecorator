@@ -24,4 +24,13 @@ public class MutableExecutorDecoratorTest {
                 .compilesWithoutError()
                 .and().generatesSources(JavaFileObjects.forResource("mutable/VoidMethodDecorator.java"));
     }
+
+    @Test
+    public void withoutMutableInterface() {
+        Truth.assert_().about(javaSource())
+                .that(JavaFileObjects.forResource("mutable/WithoutMutableInterfaceModule.java"))
+                .processedWith(new ExecutorDecoratorProcessor())
+                .compilesWithoutError()
+                .and().generatesSources(JavaFileObjects.forResource("mutable/WithoutMutableInterfaceDecorator.java"));
+    }
 }

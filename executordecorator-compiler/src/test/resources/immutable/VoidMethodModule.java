@@ -1,13 +1,13 @@
 package immutable;
 
-import com.nicolasmouchel.executordecorator.ExecutorDecorator;
+import com.nicolasmouchel.executordecorator.ImmutableExecutorDecorator;
 
 final class VoidMethodModule {
     interface VoidMethod{
         void method();
     }
 
-    @ExecutorDecorator
+    @ImmutableExecutorDecorator
     public VoidMethod produceVoidMethod(){
         return null;
     }

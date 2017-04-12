@@ -1,4 +1,12 @@
-subprojects{
+buildscript {
+    ext {
+        libGroup = 'com.nicolasmouchel'
+        libVersion = '2.0'
+    }
+}
+
+
+subprojects {
     buildscript {
         repositories {
             jcenter()

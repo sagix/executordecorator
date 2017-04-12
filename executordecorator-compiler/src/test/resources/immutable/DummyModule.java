@@ -1,13 +1,13 @@
 package immutable;
 
-import com.nicolasmouchel.executordecorator.ExecutorDecorator;
+import com.nicolasmouchel.executordecorator.ImmutableExecutorDecorator;
 
 final class DummyModule {
     interface Dummy{
 
     }
 
-    @ExecutorDecorator
+    @ImmutableExecutorDecorator
     public Dummy produceDummy(){
         return null;
     }
