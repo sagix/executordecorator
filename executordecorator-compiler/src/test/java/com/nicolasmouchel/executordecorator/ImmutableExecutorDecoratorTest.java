@@ -51,4 +51,13 @@ public class ImmutableExecutorDecoratorTest {
                 .compilesWithoutError()
                 .and().generatesSources(JavaFileObjects.forResource("immutable/VoidMethodWithParametersDecorator.java"));
     }
+
+    @Test
+    public void inheritance() {
+        Truth.assert_().about(javaSource())
+                .that(JavaFileObjects.forResource("immutable/InheritanceModule.java"))
+                .processedWith(new ExecutorDecoratorProcessor())
+                .compilesWithoutError()
+                .and().generatesSources(JavaFileObjects.forResource("immutable/InheritanceDecorator.java"));
+    }
 }
