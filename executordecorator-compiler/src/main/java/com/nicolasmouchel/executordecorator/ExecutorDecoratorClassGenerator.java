@@ -32,7 +32,8 @@ class ExecutorDecoratorClassGenerator {
     private List<MethodSpec> generateMethods(List<ExecutableElement> executableElements) {
         final List<MethodSpec> methodSpecList = new ArrayList<MethodSpec>();
         for (ExecutableElement method : executableElements) {
-            if (method.getEnclosingElement().equals(definition)) {
+            if (!method.getEnclosingElement().getSimpleName().toString()
+                    .equals(Object.class.getSimpleName())) {
                 if (method.getKind().equals(ElementKind.METHOD)
                         && method.getReturnType().getKind().equals(TypeKind.VOID)) {
                     methodSpecList.add(new RunnableMethodGenerator(method).generate());

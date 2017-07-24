@@ -50,6 +50,12 @@ publishing {
         }
     }
 }
+test {
+    reports {
+        junitXml.enabled = false
+        html.enabled = true
+    }
+}
 
 bintray {
     user = bintrayUser
