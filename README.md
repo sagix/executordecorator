@@ -14,13 +14,13 @@ Annotate a method that return a interface and a \*Decorator will be generated
 
 ## Example
 ```java
-interface MyInterface{
+interface MyInterface {
     void method();
 }
 ```
 ```java 
-@ImmutableExecutorDecorator public MyInterface provideMyInterface(){
-    return null;
+@ImmutableExecutorDecorator public MyInterface provideMyInterface() {
+    ...
 }
 ```
 Will generate:
@@ -44,6 +44,15 @@ public final class MyInterfaceDecorator implements MyInterface {
                 decorated.method();
             }
         });
+    }
+}
+```
+If you are using Dagger, then you could decorate your `MyInterface` using Dagger Module:
+```java 
+class ImmutableModule {
+    @ImmutableExecutorDecorator
+    MyInterface provideMyInterface(Executor executor, MyInterfaceImpl impl) {
+        return new MyInterfaceDecorator(executor, impl);
     }
 }
 ```
