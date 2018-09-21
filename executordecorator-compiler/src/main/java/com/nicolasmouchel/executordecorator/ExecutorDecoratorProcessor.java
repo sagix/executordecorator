@@ -103,7 +103,7 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
                 final ExecutorDecoratorClassGenerator classGenerator = new ExecutorDecoratorClassGenerator(
                         elementUtils.getAllMembers((TypeElement) realDefinition), realDefinition, generator);
 
-                final TypeSpec typeSpec = classGenerator.generate();
+                final TypeSpec typeSpec = classGenerator.generate(annotatedElement);
                 final PackageElement pkg = elementUtils.getPackageOf(annotatedElement);
 
                 final JavaFile javaFile = JavaFile

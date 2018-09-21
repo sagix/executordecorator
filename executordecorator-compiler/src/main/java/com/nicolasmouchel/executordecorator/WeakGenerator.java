@@ -11,6 +11,11 @@ import java.util.concurrent.Executor;
 
 public class WeakGenerator extends AbstractGenerator {
     @Override
+    public Class annotation() {
+        return WeakExecutorDecorator.class;
+    }
+
+    @Override
     public Iterable<FieldSpec> generateFields() {
         final ParameterizedTypeName typeVariableName = ParameterizedTypeName.get(
                 ClassName.get(WeakReference.class),

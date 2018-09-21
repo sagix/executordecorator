@@ -12,6 +12,11 @@ import java.util.concurrent.Executor;
 
 public class MutableGenerator extends AbstractGenerator {
     @Override
+    public Class annotation() {
+        return MutableExecutorDecorator.class;
+    }
+
+    @Override
     public Iterable<FieldSpec> generateFields() {
         return Collections.singletonList(
                 FieldSpec.builder(

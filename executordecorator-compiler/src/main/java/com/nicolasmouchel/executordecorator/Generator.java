@@ -10,6 +10,8 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 
 public interface Generator {
+    Class annotation();
+
     Iterable<FieldSpec> generateFields();
 
     CodeBlock generateCoreMethod(String name, String params);

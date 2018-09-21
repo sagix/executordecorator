@@ -22,11 +22,11 @@ class ExecutorDecoratorClassGenerator {
         this.generator = generator;
     }
 
-    TypeSpec generate() {
+    TypeSpec generate(Element annotatedElement) {
         final List<MethodSpec> methodSpecList = new ArrayList<MethodSpec>();
         methodSpecList.addAll(generator.generateMethodSpecList());
         methodSpecList.addAll(generateMethods(ElementFilter.methodsIn(members)));
-        return generateClassSpec(methodSpecList);
+        return generateClassSpec(methodSpecList, annotatedElement);
     }
 
     private List<MethodSpec> generateMethods(List<ExecutableElement> executableElements) {
@@ -45,7 +45,8 @@ class ExecutorDecoratorClassGenerator {
         return methodSpecList;
     }
 
-    private TypeSpec generateClassSpec(List<MethodSpec> methodSpecList) {
+    private TypeSpec generateClassSpec(List<MethodSpec> methodSpecList, Element annotatedElement) {
+
 
         return TypeSpec.classBuilder(definition.getSimpleName() + "Decorator")
                 .addSuperinterfaces(generator.generateSuperinterfaces())
@@ -53,7 +54,21 @@ class ExecutorDecoratorClassGenerator {
                 .addField(Executor.class, "executor", Modifier.PRIVATE, Modifier.FINAL)
                 .addFields(generator.generateFields())
                 .addMethods(methodSpecList)
+                .addJavadoc("Class generated from annotation {@link $T} in class: {@link $N#$L}\n",
+                        this.generator.annotation(),
+                        getNameEnclosingName(annotatedElement),
+                        annotatedElement.getSimpleName()
+                )
                 .build();
+    }
+
+    private Object getNameEnclosingName(Element annotatedElement) {
+        Element enclosingElement = annotatedElement.getEnclosingElement();
+        if (enclosingElement instanceof TypeElement) {
+            return ((TypeElement) enclosingElement).getQualifiedName();
+        } else {
+            return enclosingElement.getSimpleName();
+        }
     }
 
     private abstract class MethodGenerator {

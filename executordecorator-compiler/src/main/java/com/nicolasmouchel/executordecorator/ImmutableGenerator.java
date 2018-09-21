@@ -13,6 +13,11 @@ import java.util.concurrent.Executor;
 
 public class ImmutableGenerator extends AbstractGenerator {
     @Override
+    public Class annotation() {
+        return ImmutableExecutorDecorator.class;
+    }
+
+    @Override
     public Iterable<FieldSpec> generateFields() {
         return Collections.singletonList(
                 FieldSpec.builder(
