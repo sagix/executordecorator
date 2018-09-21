@@ -31,6 +31,6 @@ annotationProcessor {
 compileJava.options.compilerArgs << '-proc:none'
 
 dependencies {
-    compile project(':executordecorator-annotations')
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    implementation project(':executordecorator-annotations')
+    testImplementation 'junit:junit:4.12'
 }
