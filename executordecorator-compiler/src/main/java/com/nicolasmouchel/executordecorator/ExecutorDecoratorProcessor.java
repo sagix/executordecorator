@@ -1,6 +1,5 @@
 package com.nicolasmouchel.executordecorator;
 
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -18,8 +17,6 @@ import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@SuppressWarnings("unused")
-@AutoService(Processor.class)
 public class ExecutorDecoratorProcessor extends AbstractProcessor {
     private static final String TAG = ExecutorDecoratorProcessor.class.getSimpleName();
     private Types typeUtils;
@@ -98,8 +95,6 @@ public class ExecutorDecoratorProcessor extends AbstractProcessor {
                     generator.setRawType(returnType);
                     generator.setDefinition(definition);
                 }
-                final Annotation annotation = annotatedElement.getAnnotation(executorDecoratorClass);
-
                 final ExecutorDecoratorClassGenerator classGenerator = new ExecutorDecoratorClassGenerator(
                         elementUtils.getAllMembers((TypeElement) realDefinition), realDefinition, generator);
 
