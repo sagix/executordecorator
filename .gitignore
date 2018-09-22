@@ -1,5 +1,6 @@
 /.idea
 .gradle
 build
+out
 */src/generated/
 **.iml
