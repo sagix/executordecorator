@@ -1,0 +1,88 @@
+group libGroup
+version libVersion
+def libName = 'executordecorator-android-arch-extension'
+
+buildscript {
+    ext.kotlin_version = '1.2.61'
+    ext.lifecycle_version = "1.1.1"
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation project(':executordecorator-annotations')
+    implementation "android.arch.lifecycle:common-java8:$lifecycle_version"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.10.0'
+
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId libGroup
+            artifactId libName
+            version libVersion
+
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+
+    dryRun = false
+    publish = true
+    publications = ['maven']
+    pkg {
+        repo = 'maven'         // The repository
+        name = libName // The package
+        desc = 'Android extensions library which helps mutate decorator considering android lifecycle'
+        websiteUrl = 'https://github.com/sagix/executordecorator'
+        issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'
+        vcsUrl = 'https://github.com/sagix/executordecorator/issues.git'
+        licenses = ['ISC']
+        labels = ['executor', 'decorator', 'asynchronous', 'android', 'kotlin', 'extensions']
+        publicDownloadNumbers = true
+    }
+}
