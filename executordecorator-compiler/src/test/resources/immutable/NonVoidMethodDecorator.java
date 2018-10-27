@@ -3,6 +3,9 @@ package immutable;
 import java.lang.Override;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Generated;
+
+@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
 public final class NonVoidMethodDecorator implements NonVoidMethodModule.NonVoidMethod {
     private final Executor executor;
 

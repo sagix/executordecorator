@@ -5,6 +5,9 @@ import java.lang.Override;
 import java.lang.Runnable;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Generated;
+
+@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
 public final class VoidMethodWithParametersDecorator implements VoidMethodWithParametersModule.VoidMethodWithParameters {
     private final Executor executor;
 

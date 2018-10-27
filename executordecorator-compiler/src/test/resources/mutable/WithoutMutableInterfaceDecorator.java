@@ -5,6 +5,9 @@ import com.nicolasmouchel.executordecorator.MutableDecorator;
 import java.lang.Override;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Generated;
+
+@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
 public final class WithoutMutableInterfaceDecorator implements WithoutMutableInterfaceModule.WithoutMutableInterface, MutableDecorator<WithoutMutableInterfaceModule.WithoutMutableInterface> {
     private final Executor executor;
 

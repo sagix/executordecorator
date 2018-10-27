@@ -5,6 +5,9 @@ import com.nicolasmouchel.executordecorator.MutableDecorator;
 import java.lang.Override;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Generated;
+
+@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
 public final class DummyDecorator implements DummyModule.Dummy, MutableDecorator<DummyModule.Dummy> {
     private final Executor executor;
 
