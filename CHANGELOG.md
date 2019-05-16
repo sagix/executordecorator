@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Version 2.2 *(2019-05-17)*
+----------------------------
+
+ * Add extensions to follow android lifecycle 
+
+Version 2.1 *(2017-07-24)*
+----------------------------
+
+ * Fix interfaces with inheritance 
+
 Version 2.0 *(2017-01-24)*
 ----------------------------
 

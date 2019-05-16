@@ -1,7 +1,7 @@
 buildscript {
     ext {
         libGroup = 'com.nicolasmouchel'
-        libVersion = '2.2-SNAPSHOT'
+        libVersion = '2.2'
     }
 }
 
