@@ -1,5 +1,6 @@
 package com.nicolasmouchel.executordecorator;
 
+import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
@@ -17,6 +18,8 @@ import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@SuppressWarnings("unused")
+@AutoService(Processor.class)
 public class ExecutorDecoratorProcessor extends AbstractProcessor {
     private static final String TAG = ExecutorDecoratorProcessor.class.getSimpleName();
     private Types typeUtils;

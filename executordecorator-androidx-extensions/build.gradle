@@ -19,7 +19,7 @@ apply plugin: 'maven-publish'
 
 group libGroup
 version libVersion
-def libName = 'executordecorator-android-extension'
+def libName = 'executordecorator-androidx-extensions'
 
 
 

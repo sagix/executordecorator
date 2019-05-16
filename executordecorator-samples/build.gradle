@@ -1,5 +1,4 @@
 plugins {
-    id 'com.ewerk.gradle.plugins.annotation-processor' version '1.0.2'
     id 'java'
 }
 
@@ -12,25 +11,8 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs += 'src/generated/executordecorator/java'
-        }
-    }
-}
-
-// the following closure demonstrates a configuration with artifact co-ordinates
-annotationProcessor {
-    library project(':executordecorator-compiler')
-    processor "com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor"
-    sourcesDir "src/generated/executordecorator/java"
-}
-
-// must disable classpath processor
-compileJava.options.compilerArgs << '-proc:none'
-
 dependencies {
     implementation project(':executordecorator-annotations')
+    annotationProcessor project(':executordecorator-compiler')
     testImplementation 'junit:junit:4.12'
 }

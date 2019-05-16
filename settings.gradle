@@ -3,5 +3,5 @@ include 'executordecorator-compiler'
 include 'executordecorator-annotations'
 include 'executordecorator-samples'
 include 'executordecorator-android-arch-extensions'
-include 'executordecorator-android-extensions'
+include 'executordecorator-androidx-extensions'
 

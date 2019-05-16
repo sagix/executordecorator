@@ -2,7 +2,6 @@ package com.nicolasmouchel.executordecorator;
 
 import com.squareup.javapoet.*;
 
-import javax.annotation.Generated;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
@@ -59,10 +58,6 @@ class ExecutorDecoratorClassGenerator {
                         this.generator.annotation(),
                         getNameEnclosingName(annotatedElement),
                         annotatedElement.getSimpleName()
-                )
-                .addAnnotation(AnnotationSpec.builder(Generated.class)
-                        .addMember("value", "$S", "com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
-                        .build()
                 )
                 .build();
     }

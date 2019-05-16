@@ -16,7 +16,7 @@ plugins {
 
 group libGroup
 version libVersion
-def libName = 'executordecorator-android-arch-extension'
+def libName = 'executordecorator-android-arch-extensions'
 
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
