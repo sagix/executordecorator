@@ -1,12 +1,15 @@
 import org.gradle.internal.jvm.Jvm
 
+plugins {
+    id "com.jfrog.bintray"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
 group libGroup
 version libVersion
 def libName = 'executordecorator-compiler'
-
-apply plugin: 'java'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = JavaVersion.VERSION_1_6
