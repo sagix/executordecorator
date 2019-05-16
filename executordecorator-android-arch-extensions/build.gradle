@@ -83,7 +83,7 @@ bintray {
         desc = 'Android extensions library which helps mutate decorator considering android lifecycle'
         websiteUrl = 'https://github.com/sagix/executordecorator'
         issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'
-        vcsUrl = 'https://github.com/sagix/executordecorator/issues.git'
+        vcsUrl = 'https://github.com/sagix/executordecorator'
         licenses = ['ISC']
         labels = ['executor', 'decorator', 'asynchronous', 'android', 'kotlin', 'extensions']
         publicDownloadNumbers = true

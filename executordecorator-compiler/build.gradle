@@ -74,7 +74,7 @@ bintray {
         desc = 'Annotation library which create a decorator for interfaces that delegate any actions with a executor'
         websiteUrl = 'https://github.com/sagix/executordecorator'
         issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'
-        vcsUrl = 'https://github.com/sagix/executordecorator/issues.git'
+        vcsUrl = 'https://github.com/sagix/executordecorator'
         licenses = ['ISC']
         labels = ['executor', 'decorator', 'asynchronous']
         publicDownloadNumbers = true
