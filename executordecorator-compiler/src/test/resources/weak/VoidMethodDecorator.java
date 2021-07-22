@@ -5,9 +5,9 @@ import java.lang.Runnable;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 
-import javax.annotation.Generated;
-
-@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
+/**
+ * Class generated from annotation {@link com.nicolasmouchel.executordecorator.WeakExecutorDecorator} in class: {@link weak.VoidMethodModule#produceVoidMethod}
+ */
 public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod {
     private final Executor executor;
 

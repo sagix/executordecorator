@@ -4,9 +4,9 @@ import java.lang.Override;
 import java.lang.Runnable;
 import java.util.concurrent.Executor;
 
-import javax.annotation.Generated;
-
-@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
+/**
+ * Class generated from annotation {@link com.nicolasmouchel.executordecorator.ImmutableExecutorDecorator} in class: {@link immutable.InheritanceModule#produceChild}
+ */
 public final class ChildDecorator implements InheritanceModule.Child {
     private final Executor executor;
 

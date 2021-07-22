@@ -6,9 +6,9 @@ import java.lang.Override;
 import java.lang.Runnable;
 import java.util.concurrent.Executor;
 
-import javax.annotation.Generated;
-
-@Generated("com.nicolasmouchel.executordecorator.ExecutorDecoratorProcessor")
+/**
+ * Class generated from annotation {@link com.nicolasmouchel.executordecorator.MutableExecutorDecorator} in class: {@link mutable.VoidMethodModule#produceMutableVoidMethod}
+ */
 public final class VoidMethodDecorator implements VoidMethodModule.VoidMethod, MutableDecorator<VoidMethodModule.VoidMethod> {
     private final Executor executor;
 
