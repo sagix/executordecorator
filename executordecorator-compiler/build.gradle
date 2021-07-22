@@ -1,15 +1,16 @@
-import org.gradle.internal.jvm.Jvm
-
 plugins {
-    id "com.jfrog.bintray"
+    id "java"
+    id "maven"
+    id "signing"
 }
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-group libGroup
-version libVersion
 def libName = 'executordecorator-compiler'
+group libGroup
+archivesBaseName = libName
+version libVersion
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = JavaVersion.VERSION_1_6
@@ -17,7 +18,6 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
@@ -29,34 +29,8 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.google.testing.compile:compile-testing:0.15'
-    testImplementation files(Jvm.current().getToolsJar())
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId libGroup
-            artifactId libName
-            version libVersion
-
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url "$buildDir/repo"
-        }
-    }
-}
 test {
     reports {
         junitXml.enabled = false
@@ -64,22 +38,65 @@ test {
     }
 }
 
-bintray {
-    user = bintrayUser
-    key = bintrayKey
+task javadocJar(type: Jar) {
+    archiveClassifier.set('javadoc')
+    from javadoc
+}
 
-    dryRun = false
-    publish = true
-    publications = ['maven']
-    pkg {
-        repo = 'maven'         // The repository
-        name = libName // The package
-        desc = 'Annotation library which create a decorator for interfaces that delegate any actions with a executor'
-        websiteUrl = 'https://github.com/sagix/executordecorator'
-        issueTrackerUrl = 'https://github.com/sagix/executordecorator/issues'
-        vcsUrl = 'https://github.com/sagix/executordecorator'
-        licenses = ['ISC']
-        labels = ['executor', 'decorator', 'asynchronous']
-        publicDownloadNumbers = true
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name libName
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Annotation library which create a decorator for interfaces that delegate any actions with an executor'
+                url 'https://github.com/sagix/executordecorator'
+
+                scm {
+                    connection 'scm:git:https://github.com/sagix/executordecorator.git'
+                    developerConnection 'scm:git:ssh:github.com:sagix/executordecorator.git'
+                    url 'https://github.com/sagix/executordecorator'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'sagix'
+                        name 'Nicolas Mouchel'
+                        email 'sagix.ink@gmail.com'
+                    }
+                }
+            }
+        }
     }
 }

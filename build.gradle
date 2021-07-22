@@ -1,9 +1,6 @@
 buildscript {
     ext {
-        libGroup = 'com.nicolasmouchel'
-        libVersion = '2.2'
+        libGroup = 'fr.sagix'
+        libVersion = '2.3'
     }
-}
-plugins {
-    id "com.jfrog.bintray" version "1.8.4"
 }

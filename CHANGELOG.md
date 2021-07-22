@@ -1,14 +1,20 @@
 Change Log
 ==========
 
+Version 2.3 *(2021-07-22)*
+----------------------------
+
+* Migration from jcenter to maven central  
+  The group was rename from `com.nicolasmouchel` to `fr.sagix`
+
 Version 2.2 *(2018-10-27)*
 ----------------------------
 
 * Add a comment in each generated class to know the source
 * Add incremental annotation flag
 * Add android extensions to follow android lifecycle
-    * `com.nicolasmouchel:executordecorator-android-arch-extension`
-    * `com.nicolasmouchel:executordecorator-android-extension`
+  * `com.nicolasmouchel:executordecorator-android-arch-extension`
+  * `com.nicolasmouchel:executordecorator-android-extension`
 
 Version 2.1 *(2017-07-24)*
 ----------------------------

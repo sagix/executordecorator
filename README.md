@@ -6,8 +6,8 @@ Annotation library which create a decorator for interfaces that delegate any act
 
 With android gradle plugin:
 ```groovy
-provided 'com.nicolasmouchel:executordecorator-annotations:2.0'
-annotationProcessor 'com.nicolasmouchel:executordecorator-compiler:2.0'
+provided 'fr.sagix:executordecorator-annotations:2.3'
+annotationProcessor 'fr.sagix:executordecorator-compiler:2.3'
 ```
 ## Usage
 Annotate a method that return a interface and a \*Decorator will be generated
